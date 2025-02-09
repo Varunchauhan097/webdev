@@ -12,9 +12,9 @@ const todo = new Schema({
     done: Boolean,
     userId: ObjectId
 })
-const userModel = mongoose.model("users", user);
-const todoModel = mongoose.model("todos", todo)
+const UserModel = mongoose.model("users", user);
+const TodoModel = mongoose.model("todos", todo)
 module.exports = {
-    userModel: userModel,
-    todoModel: todoModel
+    UserModel: UserModel,
+    TodoModel: TodoModel
 }
