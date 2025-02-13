@@ -47,7 +47,7 @@ app.post("/signin", async function(req, res) {
     const email = req.body.email;
     const password = req.body.password;
 
-    const response = await UserModel.find({                          //findOne(method)
+    const response = await UserModel.findOne({                          //findOne(method)
         email: email
     });
     if(!response) {
@@ -57,6 +57,8 @@ app.post("/signin", async function(req, res) {
         return;
     }
     const passMatch = await bcrypt.compare(password, response.password);
+    console.log(passMatch);
+    
     if (passMatch) {
         const token = jwt.sign({
             id: response._id.toString()                          //send string to db never number
