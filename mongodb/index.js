@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -5,8 +6,7 @@ const { z } = require("zod");
 const app = express();
 const {UserModel, TodoModel} = require("./db");
 const mongoose = require("mongoose");
-// const JWT_PASSWORD= "mydearmelancholy";
-mongoose.connect("mongodb+srv://dakotajansons:Dakota%40Mongodb123@cluster0.bk1xb.mongodb.net/todo")
+mongoose.connect(process.env.MONGO_URL);
 
 app.use(express.json());
 
@@ -41,8 +41,6 @@ app.post("/signup", async function(req, res) {
 
 });
 
-const JWT_SECRET = "s3cret";
-
 app.post("/signin", async function(req, res) {
     const email = req.body.email;
     const password = req.body.password;
@@ -62,7 +60,7 @@ app.post("/signin", async function(req, res) {
     if (passMatch) {
         const token = jwt.sign({
             id: response._id.toString()                          //send string to db never number
-        }, JWT_SECRET)
+        }, process.env.JWT_SECRET)
 
         res.json({
             token
@@ -76,7 +74,7 @@ app.post("/signin", async function(req, res) {
 
 function auth(req, res, next){
     const token = req.headers.token;
-    const response = jwt.verify(token, JWT_SECRET);
+    const response = jwt.verify(token, process.env.JWT_SECRET);
     if(response){
         req.userId= response.id;                            //important
         next();
@@ -112,4 +110,4 @@ app.get("/todos", auth,async function (req, res) {
     })
 })
 
-app.listen(3000);
+app.listen(process.env.PORT);

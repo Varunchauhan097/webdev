@@ -5,7 +5,8 @@ const {z} = require("zod");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { JWT_ADMIN_PASSWORD } = require("../config");
-const { adminMiddleware } = require("../middleware/admin")
+const { adminMiddleware } = require("../middleware/admin");
+const { default: errorMap } = require("zod/locales/en.js");
 // console.log("asfjaskl")
 
 adminRouter.post("/signup", async function(req, res){
@@ -110,9 +111,10 @@ adminRouter.post("/course", adminMiddleware , async function(req, res){
 }) 
 
 adminRouter.put("/course",adminMiddleware, async function(req, res){
+
     const adminId = req.adminId;
     const { title, discription, price, imageUrl, courseId } = req.body;
-    await courseModel.updateOne({
+    const updated = await courseModel.updateOne({
         _id: courseId,
         creatorId: adminId
     }, {
@@ -121,9 +123,16 @@ adminRouter.put("/course",adminMiddleware, async function(req, res){
         price,
         imageUrl
     })
-    res.json({
-        msg: "updated successfully"
-    })
+    if(updated){
+        res.json({
+            msg: "updated successfully"
+        })
+    } else {
+        res.json({
+            msg: "failed to update"
+        })
+    }
+    
 }) 
 
 adminRouter.get("/course/bulk", adminMiddleware, async function (req, res) {
